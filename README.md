@@ -90,16 +90,20 @@ _______________________________________
 
 ```
 
+_______________________________________
+
+ 
+ 
+	 ```html
+		
+		
+		 // Module Dir: /io-modules/bind/src/bind.js
+		 // Module pattern
+		exports.hello = function(color){
+			// Changing the Modified HTML Module
+			return <(<h1 style="color:${color}">Hello World!"</h1>)>;
+		};
+
 	```
 	
-	
-	// Module Dir: /io-modules/bind/src/bind.js
-	// Module pattern
-	exports.hello = function(color){
-		// Changing the Modified HTML Module
-		return <(<h1 style="color:${color}">Hello World!"</h1>)>;
-	};
-	
-	
-	```
 _______________________________________
