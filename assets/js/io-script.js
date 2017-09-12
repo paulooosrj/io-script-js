@@ -4,6 +4,9 @@ class IoScript {
 
   constructor(config = {}) {
     this.config = config;
+    this.Prettify = (code) => {
+      return `      ${code.replace(/;/gi, ";\n\n")}`;
+    };
     this.Prefixes = [ "=" , "->" , "capture" , "print" , "write" , "require" , "scope" ];
     this.AutoCompile();
     this.Helpers();
@@ -65,6 +68,8 @@ class IoScript {
       "ielse:": "}else{",
       "ielse;": "}",
       "->": ".",
+      "Private::": "scope.Private.",
+      "Public::": "scope.Public.",
       "<(": "`",
       ")>": "`"
     }
@@ -136,8 +141,10 @@ class IoScript {
         }
         return `document.write(${$_code});`;
       },
-      "require (.*);": function($_code){
-        $_code = $_code.trim();
+      "require((.*));": function($_code){
+        
+        $_code = $_code.trim().replace(/[()]/gi, "").replace(/\s/gi, "");
+
         if(ParsedTemplate($_code)){
           $_code = ParsedTemplate($_code);
         }
@@ -145,7 +152,9 @@ class IoScript {
         var imported = {};
         c.map((PATH) => {
 
-          console.log(PATH);
+          if("debug" in s.config && s.config.debug){
+            console.log("IMPORT MODULE : " + PATH);
+          }
 
           fetch(PATH).then((res) => {
             return res.text();
@@ -226,14 +235,21 @@ class IoScript {
 
     // Variavel Global com o Codigo
     var global = code.split('\n'),
-        _turn = ``;
+        _turn = ``,
+        selfed = this;
 
     global.map((glob, index) => {
 
         glob = glob.trim();
         var clone = glob;
 
-        glob = this.CompilePattern(glob);
+        glob = selfed.CompilePattern(glob);
+
+        if("pretty" in selfed.config && selfed.config.pretty){
+          glob = selfed.Prettify(glob);
+        }else{
+          glob = glob.replace(/\s\s/gi, "");
+        }
 
         _turn += glob;
 
@@ -248,29 +264,99 @@ class IoScript {
       "sessionStorage": sessionStorage,
       "localStorage": localStorage,
       "log": console,
-      "scope": {}
+      "scope": {
+        "Public": {},
+        "Private": {}
+      },
+      "$DB": class {
+
+        constructor(){
+          this._Session = sessionStorage;
+          this._Storage = localStorage;
+          return this;
+        }
+
+        Session(name){
+          var selfed = this;
+          return {
+            set(name, value){
+              selfed._Session.setItem(name, value);
+              return this;
+            },
+            get(name){
+              return selfed._Session.getItem(name);
+            },
+            remove(name){
+              selfed._Session.removeItem(name);
+            },
+            exists(name){
+              if(selfed._Session.getItem(name)){
+                return true;
+              }else{
+                return false;
+              }
+            }
+          }
+        }
+
+        Storage(name){
+          var selfed = this;
+          return {
+            set(name, value){
+              selfed._Storage.setItem(name, value);
+              return this;
+            },
+            get(name){
+              return selfed._Storage.getItem(name);
+            },
+            remove(name){
+              selfed._Storage.removeItem(name);
+            },
+            exists(name){
+              if(selfed._Storage.getItem(name)){
+                return true;
+              }else{
+                return false;
+              }
+            }
+          }
+        }
+
+      },
+      "$App": () => new Map()
     };
+
+    var PROTECTED = `{"scope": io2.Public}`;
 
     //if(type == "module") return _turn;
 
+    if("protected" in this.config && !this.config.protected){
+        if(this.config.protected === false){
+          PROTECTED = `{"scope": io2}`;
+        }
+    }
+
     _turn += `
       (function(io, io2){
+        window.IO = Object.freeze(${PROTECTED});
         if('load' in io){
           io.load();
         } else if('load' in io2){
           io2.load();
         }
-      })(this, scope);
+      })(this, scope, window);
     `;
-    _turn = _turn.replace(/\s\s/gi, "");
 
+    _turn = _turn.replace(/{;/gi, "{");
+    _turn = `      "use strict";\n\n${_turn}`;
 
     var callback = new Function(Object.keys(Binds), _turn);
     callback = callback.bind(Binds.scope);
     var vs = Object.values(Binds);
+    Binds.scope.time_load = parseInt((window.performance.now() - startTimeCompile));
 
     if("debug" in this.config && this.config.debug){
-      console.log("%c💻 IO Script 💻 %cCompile in: %c"+parseInt((window.performance.now() - startTimeCompile))+" ms", "color:#f1c40f;font-size:17px;font-weight:bold;font-family:'Verdana';", "color:#3498db;font-size:17px;", "color:green;font-size:17px");
+      console.log("%c💻 IO Script 💻 %cCompile in: %c"+Binds.scope.time_load+" ms", "color:#f1c40f;font-size:17px;font-weight:bold;font-family:'Verdana';", "color:#3498db;font-size:17px;", "color:green;font-size:17px");
     }
 
     if(type == "exec") callback(...vs);

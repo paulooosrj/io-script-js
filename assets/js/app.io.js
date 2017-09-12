@@ -1,25 +1,42 @@
 scope.load = function(){
 
-	write '<br/>IO Script Carregado Com Sucesso!!!';
+  const App = $App(),
+        DB = new $DB();
+
+  App.set("msg", '<br/>IO Script Carregado Com Sucesso!!!');
+  App.set("pergunta", "Qual o seu nome??");
+
+  Public::Maior = (i) => (i > 18) ? "Maior" : "Menor";
+
+	write App.get("msg");
 	
-  function calc(n){
-    return (n.length > 4) ? true : false;
-  }
+  Public::calc = (n) => (n->length > 4) ? true : false;
 
   if(1 === 1):
      
-     scope->nome = capture "Qual o seu nome??"
+     scope->nome = capture App.get("pergunta")
 
-     scope.modules = require ["bind","helpers"];
+     if(scope->nome->length > 4):
+        //DB.Session().remove("pergunta"); 
+        DB.Session().set("pergunta", scope->nome);
+        if(DB.Session().exists("pergunta")):
+            print "Set Item DB: {DB.Session().get('pergunta')}";
+        endif;
+     endif;
+
+     const {hello, helpers} = require([ "bind" , "helpers" ])
 
      //print scope.modules;
 
-     scope->modules->helpers(scope->nome);
+     helpers(scope->nome);
 
-     if(calc(scope->nome)):
+     if(Public::calc(scope->nome)):
 
-         write scope->modules->hello("red");
-         // print location->href
+        write hello("red");
+        Public::Nome = "Paulao Dev";
+        Private::Idade = 19;
+        print Public::Maior(Private::Idade);
+        // print location->href
 
      ielse:
 
