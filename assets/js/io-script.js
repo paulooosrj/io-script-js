@@ -353,10 +353,17 @@ class IoScript {
     var callback = new Function(Object.keys(Binds), _turn);
     callback = callback.bind(Binds.scope);
     var vs = Object.values(Binds);
+<<<<<<< HEAD
     Binds.scope.time_load = parseInt((window.performance.now() - startTimeCompile));
 
     if("debug" in this.config && this.config.debug){
       console.log("%c💻 IO Script 💻 %cCompile in: %c"+Binds.scope.time_load+" ms", "color:#f1c40f;font-size:17px;font-weight:bold;font-family:'Verdana';", "color:#3498db;font-size:17px;", "color:green;font-size:17px");
+=======
+    Binds.scope["time_load"] = parseInt((window.performance.now() - startTimeCompile));
+
+    if("debug" in this.config && this.config.debug){
+      console.log("%c💻 IO Script 💻 %cCompile in: %c"+Binds.scope["time_load"]+" ms", "color:#f1c40f;font-size:17px;font-weight:bold;font-family:'Verdana';", "color:#3498db;font-size:17px;", "color:green;font-size:17px");
+>>>>>>> a2f24d95de4f9b4d556b49901a6b02ebb39f761a
     }
 
     if(type == "exec") callback(...vs);
