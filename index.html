@@ -5,17 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>IO Script - V1</title>
+  <style>
+    *{margin:0;padding:0}
+    body{width:100%;height:100vh;background-image: url('http://shipit.resultadosdigitais.com.br/images/posts/javascript-2-cover.jpg');background-repeat: no-repeat;background-size: cover;}
+  </style>
 </head>
 <body>
   <script type="text/io-script" src="assets/js/app.io.js"></script>
   <script src="assets/js/io-script.js?version=1.0.0" charset="utf-8"></script>
   <script type="text/javascript">
-    // Inicia o Compilador
-    new IoScript({
+    /* Configs Opcionais para iniciar com o Compilador
+    const config = {
+      AutoCompile: true, // Autocompilador
       debug: true, // Ativa modo Debug
-      protected: false, // False e Default para não acessar o escopo
-      pretty: true // Deixa o codigo mais Limpo para visualizaçao
-    });
+      protected: false, // True e Default para não acessar o escopo
+      pretty: false // Deixa o codigo mais Limpo para visualizaçao
+    }
+    */
+    // Inicia o Compilador
+    const CodeCompile = IoScript.GetInstance(/* config */);
   </script>
 </body>
 </html>
