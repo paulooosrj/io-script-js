@@ -44,7 +44,9 @@ _______________________________________
 <script type="text/javascript">
     // Start the Compiler
     new IoScript({
-      debug: true // Enable Debug Mode
+      debug: true, // Enable Debug Mode
+      protected: true, // True and Default for not accessing application scope
+      pretty: true // Leave the compiled code Cleaner for visualization, if false it will automatically activate Clean mode
     }); 
 </script>
 	  
@@ -64,14 +66,51 @@ _______________________________________
 
 _______________________________________
 
+
 ```javascript
 	
 	write == document.write
 	Exemple: 
 		write "Ola mundo!!"
 
----------------------------------------
+```
+
+_______________________________________
+
+
+```javascript
 	
+	const App = $App(); // Generating a container to reuse objects
+	Exemple: 
+		App.set("msg", "Ola mundo!!");
+		print App.get("msg");
+
+```
+
+_______________________________________
+
+
+```javascript
+	
+	const DB = $DB(); // Generating a "Database" to be used with the code
+	Exemple: 
+	
+		// Example Database Session ( It is only saved when the session is active )
+		DB.Session().set("nome", "PaulaoDev");
+		print print DB.Session().get("nome");
+		DB.Session().remove("nome");
+		
+		// Example Database Storage ( It gets saved to the computer that accessed until someone removed )
+		DB.Storage().set("nome", "PaulaoDev");
+		print print DB.Storage().get("nome");
+		DB.Storage().remove("nome");
+
+```
+
+_______________________________________
+
+
+```javascript
 	if / else
 	Exemple:
 		if(1 === 1):
@@ -79,27 +118,37 @@ _______________________________________
 		ielse:
 			write "False!!"
 		ielse;
+		
 
----------------------------------------
+```
 
+_______________________________________
+
+
+```javascript
 	endif
 	Exemple:
 		if(cond === cond):
 			write "ON!!";
 		endif;
 
----------------------------------------
+```
 
+_______________________________________
+
+
+```javascript
 	print == console.log
 	Exemple:
 		print "Console World!!"
 
----------------------------------------
-	
+```
+
+_______________________________________
+
+```javascript
 	// Modules stored in IO Script scope
 	scope.modules = require ["bind","helpers", "module_name"];
-
----------------------------------------
 
 ```
 
@@ -107,16 +156,14 @@ _______________________________________
 
  
  
-	 ```html
-		
-		
-		 // Module Dir: /io-modules/bind/src/bind.js
-		 // Module pattern
-		exports.hello = function(color){
-			// Changing the Modified HTML Module
-			return <(<h1 style="color:${color}">Hello World!"</h1>)>;
-		};
+ ```
+	// Module Dir: /io-modules/bind/src/bind.js
+	// Module pattern
+	exports.hello = function(color){
+		// Changing the Modified HTML Module
+		return <(<h1 style="color:${color}">Hello World!"</h1>)>;
+	};
 
-	```
+```
 	
 _______________________________________
