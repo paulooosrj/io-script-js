@@ -24,6 +24,12 @@ But does it take time to compile? **Do not.**
 
 _______________________________________
 
+
+  #### [Demo](https://codepen.io/PaulaoDev/pen/GvVaRp?editors=1100)
+	
+
+_______________________________________
+
 ![enter image description here](https://imgur.com/yqi4HAI.png)
 
 _______________________________________
@@ -43,11 +49,7 @@ _______________________________________
 <script src="assets/js/io-script.min.js?version=1.0.0" charset="utf-8"></script>
 <script type="text/javascript">
     // Start the Compiler
-    new IoScript({
-      debug: true, // Enable Debug Mode
-      protected: true, // True and Default for not accessing application scope
-      pretty: true // Leave the compiled code Cleaner for visualization, if false it will automatically activate Clean mode
-    }); 
+    const CodeCompile = IoScript.GetInstance(/* config */);
 </script>
 	  
 
